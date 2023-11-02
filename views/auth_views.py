@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 import json
 from utils.log_utils import Logging
-from database.models import User, Role
+from database.models import User
 from app import db
-from utils.jwt_utils import create_token, verify_token, get_username, get_role, require_role
+from utils.jwt_utils import create_token, require_role
 
 log = Logging().get_logger()
 auth_view = Blueprint("auth_view", __name__)
@@ -54,19 +54,25 @@ def logout():
     pass
 
 
-@require_role(role='user')
 @auth_view.route('/user', methods=['GET', 'POST'])
+@require_role(role='user')
 def user():
     return jsonify({'code': 200, 'message': 'user authority  success'})
 
 
-@require_role(role='admin')
 @auth_view.route('/admin', methods=['GET', 'POST'])
+@require_role(role='admin')
 def admin():
     return jsonify({'code': 200, 'message': 'admin authority success'})
 
 
-@require_role(role='courier')
 @auth_view.route('/courier', methods=['GET', 'POST'])
+@require_role(role='courier')
 def courier():
     return jsonify({'code': 200, 'message': 'courier authority success'})
+
+
+@auth_view.route('/office_staff', methods=['GET', 'POST'])
+@require_role(role='office_staff')
+def office_staff():
+    return jsonify({'code': 200, 'message': 'office_staff authority success'})

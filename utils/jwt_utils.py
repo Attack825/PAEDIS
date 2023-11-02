@@ -1,8 +1,12 @@
+from functools import wraps
+
 import jwt
 import datetime
 
 from flask import jsonify, request
 from jwt import PyJWTError
+
+from common.base_exception import RoleError
 from utils.log_utils import Logging
 from database.models import Role, User
 
@@ -71,7 +75,7 @@ def get_role(token):
 
 def require_role(role):
     """
-    权限认证装饰器 ,仅用在控制器层的装饰器,需要加在装饰器顺序的第一个,被装饰函数第一个入参为解密后的username
+    权限认证装饰器，仅用在控制器层的装饰器，需要加在装饰器顺序的最前面
     example:
     @bp.route('/getUserInf', methods=['GET'])
     @require_role(role='user')
@@ -82,16 +86,18 @@ def require_role(role):
     """
 
     def decorator(func):
+        @wraps(func)
         def wrapper(*args, **kwargs):
             token = request.headers.get('token')
-            if not token or not verify_token(token):
-                return jsonify({'code': 400, 'message': 'token error'})
-            role = get_role(token)
-            username = get_username(token)
-            user = User.query.filter_by(Role=role, UserName=username).first()
-            if user is None:
-                return jsonify({'code': 400, 'message': 'user not exist'})
-            return func(username, *args, **kwargs)
+            if token is None or not verify_token(token):
+                log.error('token错误')
+                raise RoleError('token error')
+            if get_role(token) == 'admin':
+                return func(*args, **kwargs)
+            if get_role(token) != role:
+                log.error('角色权限不足')
+                raise RoleError('role error')
+            return func(*args, **kwargs)
 
         return wrapper
 
