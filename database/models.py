@@ -1,10 +1,15 @@
 from app import db
 from enum import Enum
-# from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Role(Enum):
+    """
+    角色枚举类
+    系统管理员：admin
+    用户（寄件人、收件人）：user
+    快递员：courier
+    营业厅工作人员：office_staff
+    """
     ADMIN = "admin"
     USER = "user"
     COURIER = "courier"
@@ -28,16 +33,17 @@ class User(db.Model):
 class Shipment(db.Model):
     """
     快递表
+    Status: 0-未揽件 1-已揽件 2-运输中 3-已签收 4-已退回
     """
     __tablename__ = 'shipment'
 
     ShipmentID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
-    UserID = db.Column(db.Integer, nullable=False)
+    SenderID = db.Column(db.Integer, nullable=False)
+    ReceiverID = db.Column(db.Integer, nullable=False)
     ShipmentTime = db.Column(db.Date, nullable=False)
-    SenderAddress = db.Column(db.String(255), nullable=False)
-    ReceiverAddress = db.Column(db.String(255), nullable=False)
-    CourierID = db.Column(db.Integer)
-    Status = db.Column(db.String(255))
+    CourierID = db.Column(db.Integer, nullable=True)
+    ShipmentNumber = db.Column(db.String(255), nullable=True)
+    Status = db.Column(db.String(255), nullable=False)
 
 
 class Branch(db.Model):
@@ -78,6 +84,7 @@ class Task(db.Model):
 class Complaint(db.Model):
     """
     投诉信息表
+    Status: 0-未处理 1-已处理
     """
     __tablename__ = 'complaint'
 
