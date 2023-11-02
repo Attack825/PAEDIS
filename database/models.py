@@ -1,4 +1,14 @@
 from app import db
+from enum import Enum
+# from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+class Role(Enum):
+    ADMIN = "admin"
+    USER = "user"
+    COURIER = "courier"
+    OFFICE_STAFF = "office_staff"
 
 
 class User(db.Model):
@@ -6,11 +16,13 @@ class User(db.Model):
     用户表
     """
     __tablename__ = 'user'
-    UserID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    UserID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    Role = db.Column(db.Enum(Role), nullable=False)
     UserName = db.Column(db.String(255), nullable=False)
-    UserPhone = db.Column(db.String(255), nullable=False)
     UserPassword = db.Column(db.String(255), nullable=False)
-    UserAddress = db.Column(db.String(255), nullable=False)
+    UserPhone = db.Column(db.String(255), nullable=True)
+    UserAddress = db.Column(db.String(255), nullable=True)
+    # OfficeID = db.Column(db.String(255), nullable=False)
 
 
 class Shipment(db.Model):
@@ -19,7 +31,7 @@ class Shipment(db.Model):
     """
     __tablename__ = 'shipment'
 
-    ShipmentID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    ShipmentID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     UserID = db.Column(db.Integer, nullable=False)
     ShipmentTime = db.Column(db.Date, nullable=False)
     SenderAddress = db.Column(db.String(255), nullable=False)
@@ -34,21 +46,9 @@ class Branch(db.Model):
     """
     __tablename__ = 'branch'
 
-    BranchID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    BranchID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     BranchName = db.Column(db.String(255), nullable=False)
     BranchAddress = db.Column(db.String(255), nullable=False)
-
-
-class Courier(db.Model):
-    """
-    快递员表
-    """
-    __tablename__ = 'courier'
-
-    CourierID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
-    CourierName = db.Column(db.String(255), nullable=False)
-    CourierPhone = db.Column(db.String(255), nullable=False)
-    CourierPassword = db.Column(db.String(255), nullable=False)
 
 
 class Office(db.Model):
@@ -57,33 +57,9 @@ class Office(db.Model):
     """
     __tablename__ = 'office'
 
-    OfficeID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    OfficeID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     OfficeName = db.Column(db.String(255), nullable=False)
     OfficeAddress = db.Column(db.String(255), nullable=False)
-
-
-class OfficeStaff(db.Model):
-    """
-    营业厅工作人员表
-    """
-    __tablename__ = 'office_staff'
-
-    StaffID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
-    StaffName = db.Column(db.String(255), nullable=False)
-    StaffPhone = db.Column(db.String(255), nullable=False)
-    OfficeID = db.Column(db.Integer, nullable=False)
-    StaffPassword = db.Column(db.String(255), nullable=False)
-
-
-class Admin(db.Model):
-    """
-    系统管理员
-    """
-    __tablename__ = 'admin'
-    AdminID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
-    AdminName = db.Column(db.String(255), nullable=False)
-    AdminPhone = db.Column(db.String(255), nullable=False)
-    AdminPassword = db.Column(db.String(255), nullable=False)
 
 
 class Task(db.Model):
@@ -92,7 +68,7 @@ class Task(db.Model):
     """
     __tablename__ = 'task'
 
-    TaskID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    TaskID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     ShipmentID = db.Column(db.Integer, nullable=False)
     CourierID = db.Column(db.Integer, nullable=False)
     TaskType = db.Column(db.String(255), nullable=False)
@@ -105,8 +81,12 @@ class Complaint(db.Model):
     """
     __tablename__ = 'complaint'
 
-    ComplaintID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
+    ComplaintID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     UserID = db.Column(db.Integer, nullable=False)
     ComplaintTime = db.Column(db.Date, nullable=False)
     ComplaintContent = db.Column(db.Text, nullable=False)
     Status = db.Column(db.String(255), nullable=False)
+
+
+if __name__ == "__main__":
+    pass

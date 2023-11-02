@@ -1,37 +1,32 @@
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
+import json
 from utils.log_utils import Logging
+from database.models import User, Shipment, Branch, Office
+from app import db
 
 log = Logging().get_logger()
 user_view = Blueprint("user_view", __name__)
 
 
-@user_view.route('/user/register', methods=['POST'])
-def register():
-    pass
-
-
-@user_view.route('/user/login', methods=['POST'])
-def login():
-    pass
-
-
-@user_view.route('/user/logout', methods=['GET', 'POST'])
-def logout():
-    pass
-
-
-@user_view.route('/protected', methods=['GET', 'POST'])
-def protected():
-    pass
-
-
-@user_view.route('/user/send', methods=['GET', 'POST'])
+@user_view.route('/user/send', methods=['POST'])
 def send():
     """
     寄件
     :return:
     """
-    pass
+    data = json.loads(request.get_data().decode('utf-8'))
+    log.info(data)
+    sender_name = data.get('sender_name')
+    sender_phone = data.get('sender_phone')
+    sender_address = data.get('sender_address')
+    receiver_name = data.get('receiver_name')
+    receiver_phone = data.get('receiver_phone')
+    receiver_address = data.get('receiver_address')
+
+    shipment = Shipment()
+    shipment.add()
+    db.session.commit()
+    return jsonify({'code': 200, 'message': 'send success'})
 
 
 @user_view.route('/user/branch', methods=['GET', 'POST'])
