@@ -3,7 +3,6 @@ from flask import Flask, jsonify, render_template
 from utils.log_utils import Logging
 import sys
 import traceback
-# from flask_login import LoginManager
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from common.base_exception import TopException
@@ -61,7 +60,7 @@ def initdb():
     初始化数据库
     :return:
     """
-    from database.models import User, Shipment, Branch, Office, Task, Complaint
+    from database.models import User, Shipment, Office, Task, Complaint
     try:
         db.drop_all()
         db.create_all()
@@ -80,6 +79,18 @@ def init_admin():
     from database.models import User
     admin = User(role='admin', username='admin', password='123456')
     db.session.add(admin)
+    db.session.commit()
+
+
+@app.cli.command()
+def init_office():
+    """
+    初始化营业厅
+    :return:
+    """
+    from database.models import Office
+    office = Office(OfficeName='营业厅1', OfficeAddress='南京邮电大学')
+    db.session.add(office)
     db.session.commit()
 
 

@@ -3,7 +3,7 @@ import json
 
 from utils.jwt_utils import require_role, get_username
 from utils.log_utils import Logging
-from database.models import User, Shipment, Branch, Complaint
+from database.models import User, Shipment, Complaint, Office
 from app import db
 from datetime import datetime
 
@@ -55,24 +55,22 @@ def send():
     return jsonify({'code': 200, 'message': 'send success'})
 
 
-@user_view.route('/user/branch', methods=['GET', 'POST'])
+@user_view.route('/user/office/info', methods=['GET', 'POST'])
 @require_role(role='user')
-def branch():
+def office_info():
     """
-    网点查询
-    网点对于用户来说是上一层，用户无法选择，只能查询
-    todo: 网点作为什么东西
+    网点查询,只产生一个网点
     :return:
     """
-    branch = Branch.query.all()
-    branch_list = []
-    for b in branch:
-        branch_list.append({
+    office = Office.query.all()
+    office_list = []
+    for b in office:
+        office_list.append({
             'branch_id': b.BranchID,
             'branch_name': b.BranchName,
             'branch_address': b.BranchAddress
         })
-    return jsonify({'code': 200, 'message': 'branch query success', 'data': branch_list})
+    return jsonify({'code': 200, 'message': 'office query success', 'data': office_list})
 
 
 @user_view.route('/user/express', methods=['GET', 'POST'])

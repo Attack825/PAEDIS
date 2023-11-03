@@ -27,7 +27,7 @@ class User(db.Model):
     UserPassword = db.Column(db.String(255), nullable=False)
     UserPhone = db.Column(db.String(255), nullable=True)
     UserAddress = db.Column(db.String(255), nullable=True)
-    # OfficeID = db.Column(db.String(255), nullable=False)
+    OfficeID = db.Column(db.Integer, nullable=True)
 
 
 class Shipment(db.Model):
@@ -46,20 +46,9 @@ class Shipment(db.Model):
     Status = db.Column(db.String(255), nullable=False)
 
 
-class Branch(db.Model):
-    """
-    网点表
-    """
-    __tablename__ = 'branch'
-
-    BranchID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
-    BranchName = db.Column(db.String(255), nullable=False)
-    BranchAddress = db.Column(db.String(255), nullable=False)
-
-
 class Office(db.Model):
     """
-    营业厅表
+    营业厅表,网点表
     """
     __tablename__ = 'office'
 
@@ -71,13 +60,13 @@ class Office(db.Model):
 class Task(db.Model):
     """
     收件送件任务表
+    Status: 0-未完成 1-已完成
     """
     __tablename__ = 'task'
 
     TaskID = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     ShipmentID = db.Column(db.Integer, nullable=False)
     CourierID = db.Column(db.Integer, nullable=False)
-    TaskType = db.Column(db.String(255), nullable=False)
     TaskStatus = db.Column(db.String(255), nullable=False)
 
 
